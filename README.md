@@ -1,7 +1,5 @@
 # SunSystem - Plataforma de Gestão de Engenharia
 
-![SunSystem UI]
-
 O **SunSystem** é uma plataforma de gestão de engenharia de alta performance desenvolvida especificamente para o ecossistema do **Baja SunCity (IFBA-Jequié)**. A plataforma integra um motor de Ordens de Serviço (OS) com rastreabilidade pericial e cronômetro em tempo real a uma Wiki Técnica inspirada no padrão GitBook para a perenização de manuais em Markdown.
 
 Construído com Flutter e Firebase, o sistema resolve o desafio da comunicação e gestão de conhecimento em equipes de competição ao implementar notificações críticas via FCM API V1, controle rigoroso de dependências entre tarefas e análise de produtividade por subsistema. Ele transforma a rotina da oficina em um fluxo de dados estruturado que valida a dedicação dos membros e garante a continuidade técnica do grupo **MENTES**.
