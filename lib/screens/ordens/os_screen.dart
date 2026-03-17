@@ -10,6 +10,23 @@ import '../../responsive.dart';
 class OrdensServicoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return SafeArea(
+      child: Responsive(
+        mobile: OrdensServicoMobile(),
+        tablet: OrdensServicoDesktop(),
+        desktop: OrdensServicoDesktop(),
+      ),
+    );
+  }
+}
+
+class OrdensServicoDesktop extends StatelessWidget {
+  const OrdensServicoDesktop({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     final authController = context.watch<AuthController>();
     final usuario = authController.usuario;
 
@@ -19,40 +36,89 @@ class OrdensServicoScreen extends StatelessWidget {
         child: CircularProgressIndicator(color: Colors.orangeAccent),
       );
     }
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(defaultPadding),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (usuario == null) Center(child: CircularProgressIndicator()),
-                if (usuario.podeCriarOS ?? true)
-                  ElevatedButton.icon(
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: defaultPadding * 1.5,
-                        vertical: defaultPadding /
-                            (Responsive.isMobile(context) ? 2 : 1),
-                      ),
-                      backgroundColor: Colors.orangeAccent,
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(defaultPadding),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (usuario == null) Center(child: CircularProgressIndicator()),
+              if (usuario.podeCriarOS ?? true)
+                ElevatedButton.icon(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: defaultPadding * 1.5,
+                      vertical: defaultPadding /
+                          (Responsive.isMobile(context) ? 2 : 1),
                     ),
-                    onPressed: () {
-                      _abrirFormularioModal(context);
-                    },
-                    icon: Icon(Icons.add, color: Colors.black),
-                    label:
-                        Text("NOVA OS", style: TextStyle(color: Colors.black)),
+                    backgroundColor: Colors.orangeAccent,
                   ),
-              ],
-            ),
-            SizedBox(height: defaultPadding),
-            OSTableFull(
-                osStream: firestoreService
-                    .getDashboardOS(usuario!)), // A tabela com todos os dados
-          ],
-        ),
+                  onPressed: () {
+                    _abrirFormularioModal(context);
+                  },
+                  icon: Icon(Icons.add, color: Colors.black),
+                  label: Text("NOVA OS", style: TextStyle(color: Colors.black)),
+                ),
+            ],
+          ),
+          SizedBox(height: defaultPadding),
+          OSTableFull(
+              osStream: firestoreService
+                  .getDashboardOS(usuario!)), // A tabela com todos os dados
+        ],
+      ),
+    );
+  }
+}
+
+class OrdensServicoMobile extends StatelessWidget {
+  const OrdensServicoMobile({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final authController = context.watch<AuthController>();
+    final usuario = authController.usuario;
+
+    final firestoreService = FirestoreService();
+    if (usuario == null) {
+      return Center(
+        child: CircularProgressIndicator(color: Colors.orangeAccent),
+      );
+    }
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(defaultPadding),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (usuario == null) Center(child: CircularProgressIndicator()),
+              if (usuario.podeCriarOS ?? true)
+                ElevatedButton.icon(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: defaultPadding * 1.5,
+                      vertical: defaultPadding /
+                          (Responsive.isMobile(context) ? 2 : 1),
+                    ),
+                    backgroundColor: Colors.orangeAccent,
+                  ),
+                  onPressed: () {
+                    _abrirFormularioModal(context);
+                  },
+                  icon: Icon(Icons.add, color: Colors.black),
+                  label: Text("NOVA OS", style: TextStyle(color: Colors.black)),
+                ),
+            ],
+          ),
+          SizedBox(height: defaultPadding),
+          OSTableFull(
+              osStream: firestoreService
+                  .getDashboardOS(usuario!)), // A tabela com todos os dados
+        ],
       ),
     );
   }

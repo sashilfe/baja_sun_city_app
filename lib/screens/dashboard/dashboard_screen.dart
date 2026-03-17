@@ -15,48 +15,90 @@ import 'components/storage_details.dart';
 class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return SafeArea(
+      child: Responsive(
+        mobile: DashboardMobile(),
+        tablet: DashboardDesktop(),
+        desktop: DashboardDesktop(),
+      ),
+    );
+  }
+}
+
+class DashboardDesktop extends StatelessWidget {
+  const DashboardDesktop({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     final authController = context.watch<AuthController>();
     final usuario = authController.usuario;
 
     final firestoreService = FirestoreService();
-    return SafeArea(
-      child: SingleChildScrollView(
-        primary: false,
-        padding: EdgeInsets.only(left: defaultPadding, right: defaultPadding),
-        child: Column(
-          children: [
-            SizedBox(height: defaultPadding),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: Column(
-                    children: [
-                      if (usuario?.podeCriarOS ?? true) OSKpiSection(),
-                      SizedBox(height: defaultPadding),
-                      if (usuario != null)
-                        RecentOrders(
-                          osStream:
-                              firestoreService.getDashboardRecentOS(usuario),
-                        ),
-                      if (Responsive.isMobile(context))
-                        SizedBox(height: defaultPadding),
-                    ],
-                  ),
+    return SingleChildScrollView(
+      primary: false,
+      padding: EdgeInsets.only(left: defaultPadding, right: defaultPadding),
+      child: Column(
+        children: [
+          SizedBox(height: defaultPadding),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 5,
+                child: Column(
+                  children: [
+                    if (usuario?.podeCriarOS ?? true) OSKpiSection(),
+                    SizedBox(height: defaultPadding),
+                    if (usuario != null)
+                      RecentOrders(
+                        osStream:
+                            firestoreService.getDashboardRecentOS(usuario),
+                      ),
+                  ],
                 ),
-                if (!Responsive.isMobile(context))
-                  SizedBox(width: defaultPadding),
-                // On Mobile means if the screen is less than 850 we dont want to show it
-                if (!Responsive.isMobile(context))
-                  Expanded(
-                    flex: 2,
-                    child: StarageDetails(),
-                  ),
-              ],
-            )
-          ],
-        ),
+              ),
+              SizedBox(width: defaultPadding),
+              // On Mobile means if the screen is less than 850 we dont want to show it
+              Expanded(
+                flex: 2,
+                child: StarageDetails(),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class DashboardMobile extends StatelessWidget {
+  const DashboardMobile({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final authController = context.watch<AuthController>();
+    final usuario = authController.usuario;
+
+    final firestoreService = FirestoreService();
+    return SingleChildScrollView(
+      primary: false,
+      padding: EdgeInsets.only(left: defaultPadding, right: defaultPadding),
+      child: Column(
+        children: [
+          SizedBox(height: defaultPadding),
+          if (usuario?.podeCriarOS ?? true) OSKpiSection(),
+          SizedBox(height: defaultPadding),
+          if (usuario != null)
+            RecentOrders(
+              osStream: firestoreService.getDashboardRecentOS(usuario),
+            ),
+          SizedBox(height: defaultPadding),
+          StarageDetails(),
+        ],
       ),
     );
   }

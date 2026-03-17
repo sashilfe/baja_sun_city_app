@@ -93,7 +93,8 @@ class SideMenu extends StatelessWidget {
           DrawerListTile(
             title: "Wiki",
             svgSrc: "assets/icons/menu_setting.svg",
-            press: () {},
+            isActive: menuController.selectedIndex == 6,
+            press: () => context.read<admin.MenuController>().setMenuIndex(6),
           ),
           DrawerListTile(
             title: "Settings",

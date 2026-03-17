@@ -3,7 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  auto_updater
+  auto_updater_windows
   cloud_firestore
   firebase_auth
   firebase_core

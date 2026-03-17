@@ -1,3 +1,4 @@
+import 'package:admin/screens/wiki/wiki_screen.dart';
 import 'package:admin/constants.dart';
 import 'package:admin/controllers/MenuController.dart' as admin;
 import 'package:admin/responsive.dart';
@@ -15,15 +16,6 @@ import 'components/side_menu.dart';
 class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _screens = [
-      DashboardScreen(),
-      OrdensServicoScreen(),
-      Placeholder(), // Oficina
-      Placeholder(), // Administrativo
-      MembrosScreen(), // Gestão de Membros
-      TeamScreen(), // Equipes
-    ];
-
     return Scaffold(
       key: context.read<admin.MenuController>().scaffoldKey,
       drawer: SideMenu(),
@@ -38,37 +30,58 @@ class MainScreen extends StatelessWidget {
               ),
             Expanded(
               flex: 5,
-              child: Column(
-                children: [
-                  Padding(
-                      padding: EdgeInsets.all(defaultPadding), child: Header()),
-                  Expanded(
-                    child: Consumer<admin.MenuController>(
-                      builder: (context, menuController, _) {
-                        int index = menuController.selectedIndex;
-                        if (index < 0 || index >= _screens.length) {
-                          return Center(
-                              child: Text(
-                                  "Tela em desenvolvimento ou não encontrada"));
-                        }
-                        if (index == 1) {
-                          // Índice da OrdensServicoScreen
-                          if (menuController.selectedOsId != null) {
-                            return OSDetailsScreen(
-                                osId: menuController.selectedOsId!);
-                          }
-                        }
-
-                        return _screens[index];
-                      },
-                    ),
-                  ),
-                ],
+              child: Responsive(
+                mobile: MainContent(),
+                tablet: MainContent(),
+                desktop: MainContent(),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class MainContent extends StatelessWidget {
+  const MainContent({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> _screens = [
+      DashboardScreen(),
+      OrdensServicoScreen(),
+      Placeholder(), // Oficina
+      Placeholder(), // Administrativo
+      MembrosScreen(), // Gestão de Membros
+      TeamScreen(), // Equipes
+      WikiScreen(), // Wiki
+    ];
+    return Column(
+      children: [
+        Padding(padding: EdgeInsets.all(defaultPadding), child: Header()),
+        Expanded(
+          child: Consumer<admin.MenuController>(
+            builder: (context, menuController, _) {
+              int index = menuController.selectedIndex;
+              if (index < 0 || index >= _screens.length) {
+                return Center(
+                    child: Text("Tela em desenvolvimento ou não encontrada"));
+              }
+              if (index == 1) {
+                // Índice da OrdensServicoScreen
+                if (menuController.selectedOsId != null) {
+                  return OSDetailsScreen(osId: menuController.selectedOsId!);
+                }
+              }
+
+              return _screens[index];
+            },
+          ),
+        ),
+      ],
     );
   }
 }

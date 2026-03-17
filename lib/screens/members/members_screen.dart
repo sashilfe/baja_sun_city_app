@@ -1,51 +1,61 @@
-// lib/screens/membros/membros_screen.dart
-
 import 'package:admin/constants.dart';
 import 'package:admin/models/Usuario.dart';
+import 'package:admin/responsive.dart';
 import 'package:admin/screens/members/components/member_form.dart';
 import 'package:admin/screens/members/components/member_tables.dart';
 import 'package:flutter/material.dart';
 
-class MembrosScreen extends StatefulWidget {
+class MembrosScreen extends StatelessWidget {
   @override
-  _MembrosScreenState createState() => _MembrosScreenState();
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Responsive(
+        mobile: MembrosScreenMobile(),
+        tablet: MembrosScreenDesktop(),
+        desktop: MembrosScreenDesktop(),
+      ),
+    );
+  }
 }
 
-class _MembrosScreenState extends State<MembrosScreen> {
+class MembrosScreenDesktop extends StatefulWidget {
+  @override
+  _MembrosScreenDesktopState createState() => _MembrosScreenDesktopState();
+}
+
+class _MembrosScreenDesktopState extends State<MembrosScreenDesktop> {
   bool _exibirPainelEdicao = false;
   Usuario? _membroSelecionado;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(defaultPadding),
-        child: Column(
-          children: [
-            _buildHeader(),
-            SizedBox(height: defaultPadding),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: MembrosTable(
-                    onSelect: (membro) {
-                      setState(() {
-                        _membroSelecionado = membro;
-                        _exibirPainelEdicao = true;
-                      });
-                    },
-                  ),
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(defaultPadding),
+      child: Column(
+        children: [
+          _buildHeader(),
+          SizedBox(height: defaultPadding),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 3,
+                child: MembrosTable(
+                  onSelect: (membro) {
+                    setState(() {
+                      _membroSelecionado = membro;
+                      _exibirPainelEdicao = true;
+                    });
+                  },
                 ),
-                if (_exibirPainelEdicao) ...[
-                  SizedBox(width: defaultPadding),
-                  _buildSidePanel(),
-                ]
-              ],
-            )
-          ],
-        ),
+              ),
+              if (_exibirPainelEdicao) ...[
+                SizedBox(width: defaultPadding),
+                _buildSidePanel(),
+              ]
+            ],
+          )
+        ],
       ),
     );
   }
@@ -128,6 +138,74 @@ class _MembrosScreenState extends State<MembrosScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class MembrosScreenMobile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(defaultPadding),
+      child: Column(
+        children: [
+          _buildHeader(context),
+          SizedBox(height: defaultPadding),
+          MembrosTable(
+            onSelect: (membro) {
+              _abrirFormularioModal(context, membro);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text("Equipe Baja SunCity",
+            style: Theme.of(context).textTheme.titleLarge),
+        ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent),
+          onPressed: () {
+            _abrirFormularioModal(context, null);
+          },
+          icon: Icon(Icons.person_add, color: Colors.black),
+          label: Text("ADICIONAR", style: TextStyle(color: Colors.black)),
+        ),
+      ],
+    );
+  }
+
+  void _abrirFormularioModal(BuildContext context, Usuario? membro) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Center(
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.8,
+              decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: MemberForm(
+                membro: membro,
+                onSave: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

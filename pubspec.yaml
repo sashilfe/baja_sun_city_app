@@ -43,8 +43,10 @@ dependencies:
   googleapis_auth: ^2.2.0
   google_cloud: ^0.3.0
   http: ^1.1.0
-  auto_updater: ^0.1.0
-  flutter_dotenv: ^5.1.0
+  auto_updater: ^1.0.0
+  flutter_dotenv: ^6.0.0
+  flutter_markdown: ^0.7.7+1
+  flutter_markdown_plus: ^1.0.7
 dependency_overrides:
   meta: ^1.18.1
 

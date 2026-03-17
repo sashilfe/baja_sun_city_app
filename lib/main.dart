@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:admin/constants.dart';
 import 'package:admin/controllers/MenuController.dart' as admin;
 import 'package:admin/controllers/Auth.dart'; // Importe seu novo controller
@@ -6,6 +8,7 @@ import 'package:admin/controllers/OS.dart';
 import 'package:admin/screens/main/main_screen.dart';
 import 'package:admin/screens/login/login.dart';
 import 'package:admin/screens/ordens/components/orders_details.dart';
+import 'package:auto_updater/auto_updater.dart';
 //import 'package:admin/services/firestore_service.dart';
 import 'package:firebase_core/firebase_core.dart'; // Adicione isto
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -36,6 +39,21 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   runApp(MyApp());
+}
+
+void setupAutoUpdater() async {
+  if (!Platform.isWindows) return;
+
+  String feedURL =
+      'https://raw.githubusercontent.com/sashilfe/baja_sun_city_app/main/updates.json';
+
+  await autoUpdater.setFeedURL(feedURL);
+
+  // Verifica se há atualizações.
+  await autoUpdater.checkForUpdates();
+
+  // Verifica a cada 2 horas (7200 segundos)
+  await autoUpdater.setScheduledCheckInterval(7200);
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

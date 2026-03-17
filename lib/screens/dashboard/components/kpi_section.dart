@@ -21,7 +21,7 @@ class OSKpiSection extends StatelessWidget {
         if (data == null) return const SizedBox();
 
         return Responsive(
-          mobile: _buildGrid(context, data, crossAxisCount: 2, ratio: 1.3),
+          mobile: _buildGrid(context, data, crossAxisCount: 4, ratio: 1),
           tablet: _buildGrid(context, data, crossAxisCount: 4, ratio: 1),
           desktop: _buildGrid(context, data, crossAxisCount: 5, ratio: 1.4),
         );

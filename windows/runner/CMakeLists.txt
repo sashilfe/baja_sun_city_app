@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 
 add_executable(${BINARY_NAME} WIN32
   "flutter_window.cpp"
