@@ -1,6 +1,6 @@
 # SunSystem - Plataforma de Gestão de Engenharia
 
-![SunSystem UI](/ui.png)
+![SunSystem UI]
 
 O **SunSystem** é uma plataforma de gestão de engenharia de alta performance desenvolvida especificamente para o ecossistema do **Baja SunCity (IFBA-Jequié)**. A plataforma integra um motor de Ordens de Serviço (OS) com rastreabilidade pericial e cronômetro em tempo real a uma Wiki Técnica inspirada no padrão GitBook para a perenização de manuais em Markdown.
 
@@ -28,72 +28,3 @@ Construído com Flutter e Firebase, o sistema resolve o desafio da comunicação
 
 ---
 
-## 🚀 Como Começar
-
-Siga as instruções abaixo para configurar o ambiente e rodar o projeto localmente.
-
-### **Pré-requisitos**
-
--   [Flutter SDK](https://flutter.dev/docs/get-started/install) (versão 2.17.0 ou superior)
--   [Firebase CLI](https://firebase.google.com/docs/cli)
--   Um editor de código (VS Code, Android Studio, etc.)
-
-### **Instalação**
-
-1.  **Clone o repositório:**
-    ```sh
-    git clone https://github.com/seu-usuario/seu-repositorio.git
-    cd seu-repositorio
-    ```
-
-2.  **Instale as dependências:**
-    ```sh
-    flutter pub get
-    ```
-
-3.  **Configure o Firebase:**
-    -   Faça login no Firebase CLI: `firebase login`.
-    -   Crie um projeto no [console do Firebase](https://console.firebase.google.com/).
-    -   Adicione um aplicativo Android e/ou Web ao seu projeto Firebase.
-    -   **Para Android:** Baixe o arquivo `google-services.json` e coloque-o em `android/app/`.
-    -   **Para Web (e outras plataformas):** Configure as opções do Firebase no seu projeto Flutter usando o FlutterFire:
-        ```sh
-        flutterfire configure
-        ```
-    -   Isso irá gerar o arquivo `lib/firebase_options.dart` automaticamente.
-
-4.  **Rode o aplicativo:**
-    ```sh
-    flutter run
-    ```
-    Selecione o dispositivo desejado (Web, Desktop ou Mobile) para iniciar a aplicação.
-
----
-
-## License
-
-Este projeto é distribuído sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
----
-
-## 👥 Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/simon1tan"><img src="https://avatars.githubusercontent.com/u/1250858?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Simon Tan</b></sub></a><br /><a href="https://github.com/abuanwar072/Flutter-Responsive-Admin-Panel-or-Dashboard/issues?q=author%3Asimon1tan" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/gillescoolen"><img src="https://avatars.githubusercontent.com/u/31668393?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Gilles</b></sub></a><br /><a href="https://github.com/abuanwar072/Flutter-Responsive-Admin-Panel-or-Dashboard/issues?q=author%3Agillescoolen" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/RounakTadvi"><img src="https://avatars.githubusercontent.com/u/38634459?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Rounak Tadvi</b></sub></a><br /><a href="#maintenance-RounakTadvi" title="Maintenance">🚧</a> <a href="https://github.com/abuanwar072/Flutter-Responsive-Admin-Panel-or-Dashboard/commits?author=RounakTadvi" title="Code">💻</a></td>    
-  </tr>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
