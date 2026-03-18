@@ -1,8 +1,8 @@
 import 'package:admin/controllers/Auth.dart';
-import 'package:admin/controllers/MenuController.dart' as admin;
 import 'package:admin/controllers/OS.dart';
 import 'package:admin/models/Usuario.dart';
 import 'package:admin/services/firestore_service.dart';
+import 'package:admin/screens/estoque/components/material_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:admin/constants.dart';
@@ -72,7 +72,18 @@ Widget _buildDetailsLayout(BuildContext context, OrdemServico osAtiva) {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(flex: 3, child: OSInfoCard(os: osAtiva)),
+                  Expanded(
+                    flex: 3,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          OSInfoCard(os: osAtiva),
+                          const SizedBox(height: defaultPadding),
+                          MaterialPicker(osId: osAtiva.id!),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: defaultPadding),
                   Expanded(flex: 2, child: OSTabsView(os: osAtiva)),
                 ],
@@ -82,6 +93,8 @@ Widget _buildDetailsLayout(BuildContext context, OrdemServico osAtiva) {
                 child: Column(
                   children: [
                     OSInfoCard(os: osAtiva),
+                    const SizedBox(height: defaultPadding),
+                    MaterialPicker(osId: osAtiva.id!),
                     const SizedBox(height: defaultPadding),
                     SizedBox(height: 500, child: OSTabsView(os: osAtiva)),
                   ],

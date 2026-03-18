@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:admin/constants.dart';
 import 'package:admin/controllers/MenuController.dart' as admin;
 import 'package:admin/controllers/Auth.dart'; // Importe seu novo controller
+import 'package:admin/controllers/Estoque.dart';
 import 'package:admin/controllers/OS.dart';
 //import 'package:admin/models/OrdemServico.dart';
 import 'package:admin/screens/main/main_screen.dart';
@@ -89,6 +90,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => admin.MenuController()),
         ChangeNotifierProvider(create: (context) => AuthController()),
         ChangeNotifierProvider(create: (context) => OScontroller()),
+        ChangeNotifierProvider(create: (context) => EstoqueController()),
       ],
       child: MaterialApp(
         navigatorKey: navigatorKey,

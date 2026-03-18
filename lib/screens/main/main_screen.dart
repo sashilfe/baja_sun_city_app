@@ -4,6 +4,7 @@ import 'package:admin/controllers/MenuController.dart' as admin;
 import 'package:admin/responsive.dart';
 import 'package:admin/screens/dashboard/components/header.dart';
 import 'package:admin/screens/dashboard/dashboard_screen.dart';
+import 'package:admin/screens/estoque/estoque_screen.dart';
 import 'package:admin/screens/members/members_screen.dart';
 import 'package:admin/screens/members/team_screen.dart';
 import 'package:admin/screens/ordens/components/orders_details.dart';
@@ -53,7 +54,7 @@ class MainContent extends StatelessWidget {
     final List<Widget> _screens = [
       DashboardScreen(),
       OrdensServicoScreen(),
-      Placeholder(), // Oficina
+      EstoqueScreen(), // Oficina / Controle de Peças
       Placeholder(), // Administrativo
       MembrosScreen(), // Gestão de Membros
       TeamScreen(), // Equipes

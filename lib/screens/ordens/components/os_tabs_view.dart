@@ -1,7 +1,6 @@
-// lib/screens/ordens_servico/components/os_tabs_view.dart
-
 import 'package:admin/constants.dart';
 import 'package:admin/controllers/Auth.dart';
+import 'package:admin/models/ItemEstoque.dart';
 import 'package:admin/models/OrdemServico.dart';
 import 'package:admin/models/Usuario.dart';
 import 'package:admin/services/firestore_service.dart';
@@ -12,29 +11,31 @@ import 'package:provider/provider.dart';
 
 class OSTabsView extends StatelessWidget {
   final OrdemServico os;
+
   const OSTabsView({Key? key, required this.os}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Container(
-        padding: EdgeInsets.all(defaultPadding),
+        padding: const EdgeInsets.all(defaultPadding),
         decoration: BoxDecoration(
           color: secondaryColor,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
           children: [
-            TabBar(
+            const TabBar(
               indicatorColor: Colors.orangeAccent,
               labelColor: Colors.orangeAccent,
               unselectedLabelColor: Colors.white54,
               tabs: [
-                Tab(text: "Comentários"),
-                Tab(text: "Histórico"),
-                Tab(text: "Anexos"),
-                Tab(text: "Dependências"),
+                Tab(text: 'Comentarios'),
+                Tab(text: 'Historico'),
+                Tab(text: 'Anexos'),
+                Tab(text: 'Dependencias'),
+                Tab(text: 'Materiais'),
               ],
             ),
             Expanded(
@@ -44,6 +45,7 @@ class OSTabsView extends StatelessWidget {
                   _buildHistoryTab(),
                   _buildAttachmentsTab(),
                   _buildDependenciesTab(),
+                  _buildMaterialsTab(),
                 ],
               ),
             ),
@@ -53,7 +55,6 @@ class OSTabsView extends StatelessWidget {
     );
   }
 
-  // --- ABA DE COMENTÁRIOS ---
   Widget _buildCommentsTab() {
     return Column(
       children: [
@@ -63,25 +64,23 @@ class OSTabsView extends StatelessWidget {
                 .collection('ordens_servico')
                 .doc(os.id)
                 .collection('comentarios')
-                .orderBy('data',
-                    descending:
-                        true) // Mais recentes embaixo (ou inverta se preferir)
+                .orderBy('data', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData)
-                return Center(child: CircularProgressIndicator());
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-              var docs = snapshot.data!.docs;
+              final docs = snapshot.data!.docs;
               return ListView.builder(
-                reverse: true, // Começa de baixo para cima como um chat
+                reverse: true,
                 itemCount: docs.length,
                 itemBuilder: (context, index) {
-                  var data = docs[index].data() as Map<String, dynamic>;
+                  final data = docs[index].data() as Map<String, dynamic>;
                   return _CommentTile(
-                    user: data['usuarioNome'] ?? "Membro",
-                    text: data['texto'] ?? "",
-                    time: formatDateTime(
-                        data['data']), // Usando a função que criamos!
+                    user: data['usuarioNome'] ?? 'Membro',
+                    text: data['texto'] ?? '',
+                    time: formatDateTime(data['data']),
                     userImageUrl: data['fotoUrl'],
                   );
                 },
@@ -94,7 +93,6 @@ class OSTabsView extends StatelessWidget {
     );
   }
 
-  // --- ABA DE HISTÓRICO (Audit Log) ---
   Widget _buildHistoryTab() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -104,19 +102,20 @@ class OSTabsView extends StatelessWidget {
           .orderBy('data', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData)
-          return Center(child: CircularProgressIndicator());
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
         return ListView.builder(
-          padding: EdgeInsets.only(top: defaultPadding),
+          padding: const EdgeInsets.only(top: defaultPadding),
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
-            var data =
+            final data =
                 snapshot.data!.docs[index].data() as Map<String, dynamic>;
             return _HistoryItem(
-              action: data['acao'] ?? "",
-              user: data['usuario'] ?? "",
-              time: formatDateTime(data['data']), // Função de formatação
+              action: data['acao'] ?? '',
+              user: data['usuario'] ?? '',
+              time: formatDateTime(data['data']),
             );
           },
         );
@@ -124,17 +123,16 @@ class OSTabsView extends StatelessWidget {
     );
   }
 
-  // --- ABA DE ANEXOS ---
   Widget _buildAttachmentsTab() {
     return GridView.builder(
-      padding: EdgeInsets.only(top: defaultPadding),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      padding: const EdgeInsets.only(top: defaultPadding),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
       ),
-      itemCount: 1, // Exemplo
-      itemBuilder: (context, index) => _AttachmentCard(
+      itemCount: 1,
+      itemBuilder: (context, index) => const _AttachmentCard(
         fileName: 'Documento.pdf',
         fileSize: '2.5 MB',
       ),
@@ -149,8 +147,8 @@ class OSTabsView extends StatelessWidget {
         children: [
           Expanded(
             child: _buildDependencySection(
-              title: "Dependências (Pré-requisitos)",
-              subtitle: "Esta OS só pode iniciar após a conclusão/início de:",
+              title: 'Dependencias (Pre-requisitos)',
+              subtitle: 'Esta OS so pode iniciar apos a conclusao/inicio de:',
               icon: Icons.subdirectory_arrow_left_rounded,
               color: Colors.orangeAccent,
               stream: FirestoreService().getPreRequisitos(os.id!),
@@ -159,17 +157,153 @@ class OSTabsView extends StatelessWidget {
           const Divider(height: 32, color: Colors.white10),
           Expanded(
             child: _buildDependencySection(
-              title: "Impacto (Dependentes)",
-              subtitle:
-                  "As seguintes OSs estão aguardando esta conclusão/início:",
+              title: 'Impacto (Dependentes)',
+              subtitle: 'As seguintes OSs estao aguardando esta conclusao/inicio:',
               icon: Icons.play_for_work_rounded,
               color: Colors.blueAccent,
-              // Aqui o Stream das OS que listam esta como dependência
               stream: FirestoreService().getOSsDependentes(os.id!),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMaterialsTab() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('ordens_servico')
+          .doc(os.id)
+          .collection('materiais_consumidos')
+          .orderBy('data', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final materiais = snapshot.data!.docs
+            .map((doc) => MaterialConsumidoRelatorio.fromMap(
+                doc.data() as Map<String, dynamic>))
+            .toList();
+
+        if (materiais.isEmpty) {
+          return const Center(
+            child: Text(
+              'Nenhum material consumido nesta atividade.',
+              style: TextStyle(color: Colors.white54),
+            ),
+          );
+        }
+
+        double custoTotal = 0;
+        for (final material in materiais) {
+          custoTotal += material.custoEstimado ?? 0;
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(top: defaultPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.03),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.white10),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.inventory_2_outlined,
+                      color: Colors.orangeAccent,
+                    ),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Text(
+                        'Rastreabilidade de materiais da OS',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Text(
+                      'Custo est.: R\$ ${custoTotal.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        color: Colors.orangeAccent,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: defaultPadding),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: materiais.length,
+                  itemBuilder: (context, index) {
+                    final material = materiais[index];
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: bgColor.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white10),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.precision_manufacturing_outlined,
+                            color: Colors.orangeAccent,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  material.itemNome,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${material.quantidadeConsumida.toStringAsFixed(2)} ${material.unidade} • ${material.categoria}',
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                Text(
+                                  '${material.responsavelNome} • ${formatDateTime(material.data)}',
+                                  style: const TextStyle(
+                                    color: Colors.white38,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            material.custoEstimado == null
+                                ? 'Sem custo'
+                                : 'R\$ ${material.custoEstimado!.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              color: Colors.orangeAccent,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -187,27 +321,33 @@ class OSTabsView extends StatelessWidget {
           children: [
             Icon(icon, color: color, size: 20),
             const SizedBox(width: 10),
-            Text(title,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
           ],
         ),
-        Text(subtitle,
-            style: const TextStyle(color: Colors.white54, fontSize: 12)),
+        Text(
+          subtitle,
+          style: const TextStyle(color: Colors.white54, fontSize: 12),
+        ),
         const SizedBox(height: defaultPadding),
         Expanded(
           child: StreamBuilder<List<OrdemServico>>(
             stream: stream,
             builder: (context, snapshot) {
-              if (!snapshot.hasData)
+              if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
-              if (snapshot.data!.isEmpty) return _buildEmptyState();
+              }
+              if (snapshot.data!.isEmpty) {
+                return _buildEmptyState();
+              }
 
               return ListView.builder(
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
-                  final dep = snapshot.data![index];
-                  return _buildDependencyTile(dep, color);
+                  final dependencia = snapshot.data![index];
+                  return _buildDependencyTile(dependencia, color);
                 },
               );
             },
@@ -217,7 +357,7 @@ class OSTabsView extends StatelessWidget {
     );
   }
 
-  Widget _buildDependencyTile(OrdemServico os, Color color) {
+  Widget _buildDependencyTile(OrdemServico item, Color color) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
@@ -228,17 +368,24 @@ class OSTabsView extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text(os.codigoSequencial ?? "---",
-              style: TextStyle(
-                  color: color, fontWeight: FontWeight.bold, fontSize: 12)),
+          Text(
+            item.codigoSequencial ?? '---',
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(os.titulo!,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 13)),
+            child: Text(
+              item.titulo ?? '',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 13),
+            ),
           ),
-          _buildStatusBadge(os.status!),
+          _buildStatusBadge(item.status ?? 'Pendente'),
         ],
       ),
     );
@@ -248,15 +395,13 @@ class OSTabsView extends StatelessWidget {
     Color color;
 
     switch (status) {
-      case "Em andamento":
+      case 'Em andamento':
         color = Colors.orangeAccent;
         break;
-
-      case "Finalizada":
+      case 'Finalizada':
         color = Colors.green;
         break;
-
-      case "Pendente":
+      case 'Pendente':
       default:
         color = Colors.grey;
     }
@@ -276,11 +421,14 @@ class OSTabsView extends StatelessWidget {
 
   Widget _buildEmptyState() {
     return const Center(
-      child: Text("Nenhuma dependência registrada",
-          style: TextStyle(
-              color: Colors.white24,
-              fontSize: 12,
-              fontStyle: FontStyle.italic)),
+      child: Text(
+        'Nenhuma dependencia registrada',
+        style: TextStyle(
+          color: Colors.white24,
+          fontSize: 12,
+          fontStyle: FontStyle.italic,
+        ),
+      ),
     );
   }
 }
@@ -309,7 +457,6 @@ class _AttachmentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Preview do Arquivo
           Expanded(
             flex: 3,
             child: ClipRRect(
@@ -320,22 +467,26 @@ class _AttachmentCard extends StatelessWidget {
                       imageUrl!,
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      // Placeholder enquanto carrega a imagem da oficina
-                      loadingBuilder: (context, child, progress) => progress ==
-                              null
-                          ? child
-                          : const Center(
-                              child: CircularProgressIndicator(strokeWidth: 2)),
+                      loadingBuilder: (context, child, progress) =>
+                          progress == null
+                              ? child
+                              : const Center(
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
+                                ),
                     )
                   : Container(
                       color: Colors.white10,
                       child: const Center(
-                          child: Icon(Icons.insert_drive_file,
-                              color: Colors.white24, size: 40)),
+                        child: Icon(
+                          Icons.insert_drive_file,
+                          color: Colors.white24,
+                          size: 40,
+                        ),
+                      ),
                     ),
             ),
           ),
-          // Informações e Ações
           Expanded(
             flex: 2,
             child: Padding(
@@ -349,23 +500,33 @@ class _AttachmentCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.bold),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(fileSize,
-                          style: const TextStyle(
-                              fontSize: 10, color: Colors.white38)),
+                      Text(
+                        fileSize,
+                        style:
+                            const TextStyle(fontSize: 10, color: Colors.white38),
+                      ),
                       Row(
                         children: [
-                          const Icon(Icons.download_rounded,
-                              size: 16, color: Colors.orangeAccent),
+                          const Icon(
+                            Icons.download_rounded,
+                            size: 16,
+                            color: Colors.orangeAccent,
+                          ),
                           if (onDelete != null) ...[
                             const SizedBox(width: 8),
-                            const Icon(Icons.delete_outline,
-                                size: 16, color: Colors.redAccent),
+                            const Icon(
+                              Icons.delete_outline,
+                              size: 16,
+                              color: Colors.redAccent,
+                            ),
                           ],
                         ],
                       ),
@@ -382,8 +543,10 @@ class _AttachmentCard extends StatelessWidget {
 }
 
 class _CommentTile extends StatelessWidget {
-  final String user, text, time;
-  final String? userImageUrl; // Opcional, se quiser usar a foto do Firebase
+  final String user;
+  final String text;
+  final String time;
+  final String? userImageUrl;
 
   const _CommentTile({
     required this.user,
@@ -399,22 +562,20 @@ class _CommentTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Avatar do Membro
           CircleAvatar(
             radius: 16,
             backgroundColor: Colors.orangeAccent.withValues(alpha: 0.1),
             child: userImageUrl != null
                 ? ClipOval(child: Image.network(userImageUrl!))
-                : Icon(Icons.person, size: 18, color: Colors.orangeAccent),
+                : const Icon(Icons.person, size: 18, color: Colors.orangeAccent),
           ),
-          SizedBox(width: 12),
-          // Conteúdo do Comentário
+          const SizedBox(width: 12),
           Expanded(
             child: Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: bgColor.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(15),
                   bottomLeft: Radius.circular(15),
                   bottomRight: Radius.circular(15),
@@ -428,7 +589,7 @@ class _CommentTile extends StatelessWidget {
                     children: [
                       Text(
                         user,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                           color: Colors.orangeAccent,
@@ -436,15 +597,19 @@ class _CommentTile extends StatelessWidget {
                       ),
                       Text(
                         time,
-                        style: TextStyle(fontSize: 10, color: Colors.white24),
+                        style:
+                            const TextStyle(fontSize: 10, color: Colors.white24),
                       ),
                     ],
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     text,
-                    style: TextStyle(
-                        fontSize: 13, color: Colors.white70, height: 1.4),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.white70,
+                      height: 1.4,
+                    ),
                   ),
                 ],
               ),
@@ -456,11 +621,16 @@ class _CommentTile extends StatelessWidget {
   }
 }
 
-// Componente de Item de Histórico
 class _HistoryItem extends StatelessWidget {
-  final String action, user, time;
-  const _HistoryItem(
-      {required this.action, required this.user, required this.time});
+  final String action;
+  final String user;
+  final String time;
+
+  const _HistoryItem({
+    required this.action,
+    required this.user,
+    required this.time,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -468,17 +638,23 @@ class _HistoryItem extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 15),
       child: Row(
         children: [
-          Icon(Icons.history, size: 16, color: Colors.orangeAccent),
-          SizedBox(width: 10),
+          const Icon(Icons.history, size: 16, color: Colors.orangeAccent),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(action,
-                    style:
-                        TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                Text("$user • $time",
-                    style: TextStyle(fontSize: 11, color: Colors.white54)),
+                Text(
+                  action,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '$user • $time',
+                  style: const TextStyle(fontSize: 11, color: Colors.white54),
+                ),
               ],
             ),
           ),
@@ -488,14 +664,13 @@ class _HistoryItem extends StatelessWidget {
   }
 }
 
-// Input de Chat para Comentários
-
 class OSChatInput extends StatefulWidget {
   final String osId;
+
   const OSChatInput({Key? key, required this.osId}) : super(key: key);
 
   @override
-  _OSChatInputState createState() => _OSChatInputState();
+  State<OSChatInput> createState() => _OSChatInputState();
 }
 
 class _OSChatInputState extends State<OSChatInput> {
@@ -511,7 +686,7 @@ class _OSChatInputState extends State<OSChatInput> {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthController>().usuario!;
-    var data;
+    Map<String, dynamic>? data;
 
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
@@ -524,7 +699,7 @@ class _OSChatInputState extends State<OSChatInput> {
         if (snapshot.hasData && snapshot.data!.exists) {
           data = snapshot.data!.data() as Map<String, dynamic>;
           isFinalizado =
-              data['status'] == "Finalizado" || data['status'] == "Pendente";
+              data!['status'] == 'Finalizado' || data!['status'] == 'Pendente';
         }
 
         return Padding(
@@ -537,16 +712,19 @@ class _OSChatInputState extends State<OSChatInput> {
                 TextStyle(color: isFinalizado ? Colors.white24 : Colors.white),
             decoration: InputDecoration(
               hintText: isFinalizado
-                  ? "OS " + data['status'] + " - Chat desativado"
-                  : "Dúvida técnica ou atualização...",
+                  ? 'OS ${data?['status'] ?? ''} - Chat desativado'
+                  : 'Duvida tecnica ou atualizacao...',
               hintStyle: TextStyle(
-                  color: isFinalizado
-                      ? Colors.redAccent.withValues(alpha: 0.5)
-                      : Colors.white24,
-                  fontSize: 13),
+                color: isFinalizado
+                    ? Colors.redAccent.withValues(alpha: 0.5)
+                    : Colors.white24,
+                fontSize: 13,
+              ),
               suffixIcon: IconButton(
-                icon: Icon(Icons.send,
-                    color: isFinalizado ? Colors.grey : Colors.orangeAccent),
+                icon: Icon(
+                  Icons.send,
+                  color: isFinalizado ? Colors.grey : Colors.orangeAccent,
+                ),
                 onPressed: isFinalizado ? null : () => _enviar(user),
               ),
               filled: true,

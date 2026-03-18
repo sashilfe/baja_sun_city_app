@@ -38,13 +38,41 @@ class SideMenu extends StatelessWidget {
             isActive: menuController.selectedIndex == 1,
             press: () => context.read<admin.MenuController>().setMenuIndex(1),
           ),
-          DrawerListTile(
-              title: "Oficina",
-              svgSrc: "assets/icons/menu_task.svg",
-              isActive: menuController.selectedIndex == 2,
-              press:
-                  () {} //=> context.read<admin.MenuController>().setMenuIndex(2),
+          Theme(
+            data: Theme.of(context).copyWith(
+              dividerColor: Colors.transparent,
+            ),
+            child: ExpansionTile(
+              initiallyExpanded: menuController.selectedIndex == 2,
+              title: Text(
+                "Oficina",
+                style: TextStyle(
+                  color: menuController.selectedIndex == 2
+                      ? Colors.orangeAccent
+                      : Colors.white54,
+                  fontWeight: menuController.selectedIndex == 2
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                ),
               ),
+              leading: SvgPicture.asset(
+                "assets/icons/menu_task.svg",
+                height: 16,
+                color: menuController.selectedIndex == 2
+                    ? Colors.orangeAccent
+                    : Colors.white54,
+              ),
+              children: [
+                DrawerListTile(
+                  title: "Controle de Peças",
+                  svgSrc: "assets/icons/menu_store.svg",
+                  isActive: menuController.selectedIndex == 2,
+                  press: () =>
+                      context.read<admin.MenuController>().setMenuIndex(2),
+                ),
+              ],
+            ),
+          ),
           DrawerListTile(
               title: "Administrativo",
               svgSrc: "assets/icons/menu_doc.svg",

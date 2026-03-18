@@ -23,8 +23,10 @@ class _AddPageDialogState extends State<AddPageDialog> {
   @override
   void initState() {
     super.initState();
-    titleController = TextEditingController(text: widget.pageToEdit?.title ?? "");
-    contentController = TextEditingController(text: widget.pageToEdit?.content ?? "");
+    titleController =
+        TextEditingController(text: widget.pageToEdit?.title ?? "");
+    contentController =
+        TextEditingController(text: widget.pageToEdit?.content ?? "");
     // TODO: Salvar o categoryId no modelo WikiPage para preencher aqui na edição.
     // selectedCategoryId = widget.pageToEdit?.categoryId;
   }
@@ -82,7 +84,8 @@ class _AddPageDialogState extends State<AddPageDialog> {
                           style: const TextStyle(color: Colors.white)),
                     );
                   }).toList(),
-                  onChanged: (value) => setState(() => selectedCategoryId = value),
+                  onChanged: (value) =>
+                      setState(() => selectedCategoryId = value),
                   decoration: _inputDecoration(
                     label: 'Categoria de Destino',
                     hint: 'Selecione uma categoria',
@@ -95,7 +98,8 @@ class _AddPageDialogState extends State<AddPageDialog> {
             TextField(
               controller: contentController,
               maxLines: 12,
-              style: GoogleFonts.firaCode(textStyle: const TextStyle(color: Colors.white70)),
+              style: GoogleFonts.firaCode(
+                  textStyle: const TextStyle(color: Colors.white70)),
               decoration: _inputDecoration(
                 label: 'Conteúdo da Página (Markdown)',
                 hint: 'Use a sintaxe Markdown para formatar o texto...',
@@ -116,16 +120,19 @@ class _AddPageDialogState extends State<AddPageDialog> {
           onTap: () async {
             if (titleController.text.isEmpty ||
                 (selectedCategoryId == null && !isEditing)) {
-              // TODO: Mostrar feedback de erro para o usuário
               return;
             }
 
             if (isEditing) {
-              // TODO: Implementar a lógica de update no WikiService
-              // await widget.wikiService.updatePage(...);
+              await widget.wikiService.updatePage(
+                widget.pageToEdit!.id,
+                titleController.text,
+                contentController.text,
+                selectedCategoryId,
+              );
             } else {
-              await widget.wikiService.addPage(
-                  titleController.text, contentController.text, selectedCategoryId!);
+              await widget.wikiService.addPage(titleController.text,
+                  contentController.text, selectedCategoryId!);
             }
             if (mounted) Navigator.pop(context);
           },

@@ -48,6 +48,8 @@ class MenuController extends ChangeNotifier {
       case 5:
         return "Equipes";
       case 6:
+        return "Wiki";
+      case 7:
         return "Configurações";
       default:
         return "SunSystem";

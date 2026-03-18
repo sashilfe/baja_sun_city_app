@@ -61,10 +61,12 @@ class WikiService {
     });
   }
 
-  Future<void> updatePage(String pageId, String title, String content) {
+  Future<void> updatePage(
+      String pageId, String title, String content, String? param3) {
     return _db.collection('wiki_pages').doc(pageId).update({
       'title': title,
       'content': content,
+      'categoryId': param3,
     });
   }
 

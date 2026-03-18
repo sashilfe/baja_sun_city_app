@@ -27,6 +27,7 @@ class _WikiScreenState extends State<WikiScreen> {
       context: context,
       builder: (context) => AddPageDialog(
         wikiService: _wikiService,
+        pageToEdit: page,
       ),
     );
   }
